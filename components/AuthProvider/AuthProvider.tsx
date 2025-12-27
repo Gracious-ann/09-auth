@@ -4,6 +4,7 @@ import { checkSession, getMe, logout } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Loader from '../Loader/Loader';
 
 const PRIVATE_ROUTES = ['/profile', '/profile/edit', '/notes/:path*'];
 
@@ -25,34 +26,39 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
+      try {
+        const isPrivateRoute = PRIVATE_ROUTES.some(route =>
+          pathname.startsWith(route)
+        );
+        const isAuthenticated = await checkSession();
 
-      const isPrivateRoute = PRIVATE_ROUTES.some(route =>
-        pathname.startsWith(route)
-      );
-      const isAuthenticated = await checkSession();
+        if (!isAuthenticated && isPrivateRoute) {
+          await logout();
+          clearIsAuthenticated();
+          router.replace('/login');
+          return;
+        }
 
-      if (!isAuthenticated && isPrivateRoute) {
-        await logout();
+        if (isAuthenticated) {
+          const user = await getMe();
+          if (user) setUser(user);
+        } else {
+          clearIsAuthenticated();
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
         clearIsAuthenticated();
-        router.replace('/login');
-        setLoading(false);
-        return;
-      }
-
-      if (isAuthenticated) {
-        const user = await getMe();
-        if (user) setUser(user);
-      } else {
-        clearIsAuthenticated();
-        setLoading(false);
+      } finally {
+        setLoading(false); // Завжди виконується
       }
     };
+
     fetchUser();
   }, [setUser, clearIsAuthenticated, router, pathname]);
 
-  //   if (loading) {
-  //     return <div>Loading...</div>;
-  //   }
+  if (loading) {
+    return <Loader />;
+  }
 
   return children;
 };
