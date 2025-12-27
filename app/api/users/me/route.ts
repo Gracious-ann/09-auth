@@ -48,7 +48,7 @@ export async function PATCH(request: NextRequest) {
       logErrorResponse(error.response?.data);
       return NextResponse.json(
         { error: error.message, response: error.response?.data },
-        { status: error.response?.status } // тут краще error.response?.status
+        { status: error.response?.status }
       );
     }
     logErrorResponse({ message: (error as Error).message });
