@@ -18,6 +18,11 @@
   color: #ddd;
 }
 
+.navigationItem {
+  display: flex;
+  align-items: center;
+}
+
 .navigation {
   list-style-type: none;
   margin: 0;

@@ -13,7 +13,7 @@ function AuthNavigation() {
   const handleLogout = async () => {
     await logout();
     clearIsAuthenticated();
-    router.push('/');
+    router.push('/sign-in');
   };
 
   return (
@@ -31,7 +31,7 @@ function AuthNavigation() {
           </li>
 
           <li className={css.navigationItem}>
-            <p className={css.userEmail}>{user?.email.slice(0, 10)}</p>
+            <p className={css.userEmail}>{user?.email.slice(0, 8)}</p>
             <button
               className={css.logoutButton}
               onClick={handleLogout}

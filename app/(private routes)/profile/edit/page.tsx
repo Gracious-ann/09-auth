@@ -12,12 +12,11 @@ const EditProfile = () => {
   const [username, setUserName] = useState(user?.username || '');
   const router = useRouter();
 
-  const [photo, setPhoto] = useState('');
+  // const [photo, setPhoto] = useState('');
 
   useEffect(() => {
     getMe().then(user => {
       setUserName(user.username ?? '');
-      setPhoto(user.avatar ?? '');
     });
   }, []);
 
@@ -25,9 +24,10 @@ const EditProfile = () => {
     setUserName(event.target.value);
   };
 
-  const handleSaveUser = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSaveUser = async (formData: FormData) => {
     try {
+      const username = formData.get('username') as string;
+
       const updatedUser = await update({ username });
       setUser(updatedUser);
       router.push('/profile');
@@ -56,7 +56,7 @@ const EditProfile = () => {
 
         <form
           className={css.profileInfo}
-          onSubmit={handleSaveUser}
+          action={handleSaveUser}
         >
           <div className={css.usernameWrapper}>
             <label htmlFor='username'>Username:</label>

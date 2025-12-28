@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Api } from '../api';
+import { api } from '../api';
 import { cookies } from 'next/headers';
 import { isAxiosError } from 'axios';
 import { logErrorResponse } from '../_utils/utils';
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const rawTag = request.nextUrl.searchParams.get('tag') ?? '';
     const tag = rawTag === 'All' ? '' : rawTag;
 
-    const res = await Api('/notes', {
+    const res = await api('/notes', {
       params: {
         ...(search !== '' && { search }),
         page,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const res = await Api.post('/notes', body, {
+    const res = await api.post('/notes', body, {
       headers: {
         Cookie: cookieStore.toString(),
         'Content-Type': 'application/json',
